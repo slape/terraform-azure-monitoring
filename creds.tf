@@ -9,7 +9,7 @@ output "tls_private_key" {
 }
 
 data "azurerm_storage_account_sas" "token" {
-  connection_string = azurerm_storage_account.mystorageaccount.connection_string.value
+  connection_string = azurerm_storage_account.mystorageaccount.primary_connection_string
   https_only        = true
 
   resource_types {
