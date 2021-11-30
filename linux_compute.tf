@@ -39,7 +39,7 @@ resource "azurerm_linux_virtual_machine" "myterraformvm" {
     }
 
     boot_diagnostics {
-        storage_account_uri = azurerm_storage_account.mystorageaccount.primary_blob_endpoint
+        storage_account_uri = azurerm_storage_account.storageaccount.primary_blob_endpoint
     }
 
     tags = {
@@ -59,7 +59,7 @@ resource "azurerm_virtual_machine_extension" "diagnostics" {
 
   settings = <<SETTINGS
     {
-      "StorageAccount": "${azurerm_storage_account.mystorageaccount.name}",
+      "StorageAccount": "${azurerm_storage_account.storageaccount.name}",
       "ladCfg": {
           "diagnosticMonitorConfiguration": {
                 "eventVolume": "Medium", 
@@ -84,7 +84,7 @@ resource "azurerm_virtual_machine_extension" "diagnostics" {
 
   protected_settings = <<SETTINGS
     {
-        "storageAccountName": "${azurerm_storage_account.mystorageaccount.name}",
+        "storageAccountName": "${azurerm_storage_account.storageaccount.name}",
         "storageAccountSasToken": "${data.azurerm_storage_account_sas.token.sas}",
         "storageAccountEndPoint": "https://core.windows.net",
          "sinksConfig":  {

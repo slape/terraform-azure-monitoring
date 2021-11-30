@@ -23,7 +23,7 @@ resource "azurerm_windows_virtual_machine" "Win-VM" {
     admin_password = "P4ssw0rd"
 
     boot_diagnostics {
-        storage_account_uri = azurerm_storage_account.mystorageaccount.primary_blob_endpoint
+        storage_account_uri = azurerm_storage_account.storageaccount.primary_blob_endpoint
     }
 
     tags = {
@@ -37,18 +37,20 @@ resource "azurerm_virtual_machine_extension" "InGuestDiagnostics" {
   virtual_machine_id         = azurerm_windows_virtual_machine.Win-VM.id
   publisher                  = "Microsoft.Azure.Diagnostics"
   type                       = "IaaSDiagnostics"
-  type_handler_version       = "1.16"
+  type_handler_version       = "1.6"
+
   auto_upgrade_minor_version = true
   settings           = <<SETTINGS
     {
       "xmlCfg": "${base64encode(templatefile("${path.module}/configs/wadcfgxml.tmpl", { vmid = azurerm_windows_virtual_machine.Win-VM.id }))}",
-      "storageAccount": "${azurerm_storage_account.mystorageaccount.name}"
+      "storageAccount": "${azurerm_storage_account.storageaccount.name}",
+      "StorageType": "Blob" 
     }
 SETTINGS
   protected_settings = <<PROTECTEDSETTINGS
     {
-      "storageAccountName": "${azurerm_storage_account.mystorageaccount.name}",
-      "storageAccountKey": "${azurerm_storage_account.mystorageaccount.primary_access_key}",
+      "storageAccountName": "${azurerm_storage_account.storageaccount.name}",
+      "storageAccountKey": "${azurerm_storage_account.storageaccount.primary_access_key}",
       "storageAccountEndPoint": "https://core.windows.net"
     }
 PROTECTEDSETTINGS
